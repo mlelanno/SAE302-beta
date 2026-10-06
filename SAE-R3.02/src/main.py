@@ -1,4 +1,5 @@
 import sys
+import os
 import random
 from PySide6.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsRectItem, QMainWindow
 from PySide6.QtGui import QPixmap, QColor, QBrush, QPainterPath, QPen
@@ -104,7 +105,8 @@ class Simulation(QMainWindow):
         # Afficher la carte en fond (le plan du carrefour)
         # L'image originale carrefour.png est utilisée, on la redimensionne pour qu'elle corresponde au SVG
         # Le chemin est modifié pour utiliser assets au lieu de ../assets afin d'être exécutable depuis la racine
-        image_fond = QPixmap("assets/carrefour.png").scaled(1770, 1120)
+        chemin_image = os.path.join(os.path.dirname(__file__), "..", "assets", "carrefour.png")
+        image_fond = QPixmap(chemin_image).scaled(1770, 1120)
         if not image_fond.isNull():
             self.scene.addPixmap(image_fond)
 
