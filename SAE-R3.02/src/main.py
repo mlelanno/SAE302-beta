@@ -125,10 +125,10 @@ class Simulation(QMainWindow):
         # Ajouter les feux tricolores
         self.feux = []
         # Positions ajustées d'après les numéros sur le plan (coordonnées des petits boîtiers dessinés sur la carte)
-        self.feux.append(FeuTricolore(self.scene, 465, 380, axe=1))   # Feu 6 (Ouest)
-        self.feux.append(FeuTricolore(self.scene, 1200, 550, axe=1))  # Feu 8 (Est)
-        self.feux.append(FeuTricolore(self.scene, 535, 625, axe=2))   # Feu 1 (Nord, position visuelle gauche)
-        self.feux.append(FeuTricolore(self.scene, 875, 870, axe=2))   # Feu 5 (Sud)
+        self.feux.append(FeuTricolore(self.scene, 560, 560, axe=1))   # Feu Ouest
+        self.feux.append(FeuTricolore(self.scene, 1230, 780, axe=1))  # Feu Est
+        self.feux.append(FeuTricolore(self.scene, 930, 410, axe=2))   # Feu Nord
+        self.feux.append(FeuTricolore(self.scene, 820, 985, axe=2))   # Feu Sud
 
         self.cycle_feux = 1 # 1 = Horizontal Vert, 2 = Vertical Vert
         self.timer_feux = QTimer()
@@ -208,7 +208,7 @@ class Simulation(QMainWindow):
             doit_sarreter = False
 
             # Arrêt pour anti-collision
-            if v in voitures_a_arreter and not v.est_urgence:
+            if v in voitures_a_arreter:
                 doit_sarreter = True
 
             # Arrêt au feu rouge en vérifiant si la voiture est dans une "zone d'arrêt"
@@ -218,20 +218,20 @@ class Simulation(QMainWindow):
 
             # Vérifications très simples basées sur la position (X,Y) sur la carte
             if v.trajet_numero in [1,2,3]: # Ouest vers le reste
-                if 480 < pos.x() < 550: dans_zone_arret = True
+                if 500 < pos.x() < 560: dans_zone_arret = True
             elif v.trajet_numero in [4,5,6]: # Est vers le reste
-                if 1250 < pos.x() < 1320: dans_zone_arret = True
+                if 1240 < pos.x() < 1300: dans_zone_arret = True
             elif v.trajet_numero in [7,8,9]: # Nord vers le reste
-                if 350 < pos.y() < 420: dans_zone_arret = True
+                if 350 < pos.y() < 410: dans_zone_arret = True
             elif v.trajet_numero in [10,11,12]: # Sud vers le reste
-                if 880 < pos.y() < 950: dans_zone_arret = True
+                if 985 < pos.y() < 1045: dans_zone_arret = True
 
             if dans_zone_arret:
                 axe_vehicule = 1 if v.trajet_numero in [1,2,3,4,5,6] else 2
                 if axe_vehicule != self.cycle_feux: # Si notre axe est au rouge
                     doit_sarreter = True
 
-            if doit_sarreter and not v.est_urgence:
+            if doit_sarreter:
                 # On force la voiture à ne pas avancer ce tour-ci
                 pass
             else:
