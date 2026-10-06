@@ -126,11 +126,11 @@ class Simulation(QMainWindow):
 
         # Ajouter les feux tricolores
         self.feux = []
-        # Positions ajustées d'après les numéros sur le plan (coordonnées des petits boîtiers dessinés sur la carte)
-        self.feux.append(FeuTricolore(self.scene, 560, 560, axe=1))   # Feu Ouest
-        self.feux.append(FeuTricolore(self.scene, 1230, 780, axe=1))  # Feu Est
-        self.feux.append(FeuTricolore(self.scene, 930, 410, axe=2))   # Feu Nord
-        self.feux.append(FeuTricolore(self.scene, 820, 985, axe=2))   # Feu Sud
+        # Positions ajustées sur les boitiers dessinés sur la carte
+        self.feux.append(FeuTricolore(self.scene, 535, 625, axe=1))   # Feu Ouest
+        self.feux.append(FeuTricolore(self.scene, 1200, 550, axe=1))  # Feu Est
+        self.feux.append(FeuTricolore(self.scene, 870, 380, axe=2))   # Feu Nord
+        self.feux.append(FeuTricolore(self.scene, 760, 870, axe=2))   # Feu Sud
 
         self.cycle_feux = 1 # 1 = Horizontal Vert, 2 = Vertical Vert
         self.timer_feux = QTimer()
@@ -230,7 +230,7 @@ class Simulation(QMainWindow):
 
             if dans_zone_arret:
                 axe_vehicule = 1 if v.trajet_numero in [1,2,3,4,5,6] else 2
-                if axe_vehicule != self.cycle_feux: # Si notre axe est au rouge
+                if axe_vehicule != self.cycle_feux and not v.est_urgence: # Si notre axe est au rouge
                     doit_sarreter = True
 
             if doit_sarreter:
