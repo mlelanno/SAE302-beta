@@ -1,4 +1,5 @@
 import sys
+import os
 import random
 from PySide6.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsRectItem, QMainWindow
 from PySide6.QtGui import QPixmap, QColor, QBrush, QPainterPath, QPen
@@ -104,7 +105,8 @@ class Simulation(QMainWindow):
         # Afficher la carte en fond (le plan du carrefour)
         # L'image originale carrefour.png est utilisée, on la redimensionne pour qu'elle corresponde au SVG
         # Le chemin est modifié pour utiliser assets au lieu de ../assets afin d'être exécutable depuis la racine
-        image_fond = QPixmap("assets/carrefour.png").scaled(1770, 1120)
+        chemin_image = os.path.join(os.path.dirname(__file__), "..", "assets", "carrefour.png")
+        image_fond = QPixmap(chemin_image).scaled(1770, 1120)
         if not image_fond.isNull():
             self.scene.addPixmap(image_fond)
 
@@ -124,11 +126,11 @@ class Simulation(QMainWindow):
 
         # Ajouter les feux tricolores
         self.feux = []
-        # Positions ajustées d'après les numéros sur le plan (coordonnées des petits boîtiers dessinés sur la carte)
-        self.feux.append(FeuTricolore(self.scene, 465, 380, axe=1))   # Feu 6 (Ouest)
-        self.feux.append(FeuTricolore(self.scene, 1200, 550, axe=1))  # Feu 8 (Est)
-        self.feux.append(FeuTricolore(self.scene, 535, 625, axe=2))   # Feu 1 (Nord, position visuelle gauche)
-        self.feux.append(FeuTricolore(self.scene, 875, 870, axe=2))   # Feu 5 (Sud)
+        # Positions exactes extraites du SVG
+        self.feux.append(FeuTricolore(self.scene, 584, 692, axe=1))   # Feu Ouest
+        self.feux.append(FeuTricolore(self.scene, 1218, 611, axe=1))  # Feu Est
+        self.feux.append(FeuTricolore(self.scene, 835, 425, axe=2))   # Feu Nord
+        self.feux.append(FeuTricolore(self.scene, 873, 1020, axe=2))  # Feu Sud
 
         self.cycle_feux = 1 # 1 = Horizontal Vert, 2 = Vertical Vert
         self.timer_feux = QTimer()
@@ -180,11 +182,16 @@ class Simulation(QMainWindow):
                 distance = math.hypot(pos1.x() - pos2.x(), pos1.y() - pos2.y())
 
                 if distance < 40: # Distance de sécurité
-                    # Si trop proche, celui qui a la progression la plus faible s'arrête
-                    if v1.progression < v2.progression:
-                        voitures_a_arreter.add(v1)
+                    # Les véhicules d'urgence doublent (passent à travers) les véhicules normaux
+                    if v1.est_urgence and not v2.est_urgence:
+                        pass # v1 ne s'arrête pas
+                    elif v2.est_urgence and not v1.est_urgence:
+                        pass # v2 ne s'arrête pas
                     else:
-                        voitures_a_arreter.add(v2)
+                        if v1.progression < v2.progression:
+                            voitures_a_arreter.add(v1)
+                        else:
+                            voitures_a_arreter.add(v2)
 
         # 2. Verifier s'il y a un vehicule d'urgence dans le carrefour et forcer les feux
         urgence_en_cours = False
@@ -208,7 +215,7 @@ class Simulation(QMainWindow):
             doit_sarreter = False
 
             # Arrêt pour anti-collision
-            if v in voitures_a_arreter and not v.est_urgence:
+            if v in voitures_a_arreter:
                 doit_sarreter = True
 
             # Arrêt au feu rouge en vérifiant si la voiture est dans une "zone d'arrêt"
@@ -218,20 +225,20 @@ class Simulation(QMainWindow):
 
             # Vérifications très simples basées sur la position (X,Y) sur la carte
             if v.trajet_numero in [1,2,3]: # Ouest vers le reste
-                if 480 < pos.x() < 550: dans_zone_arret = True
+                if 520 < pos.x() < 580: dans_zone_arret = True
             elif v.trajet_numero in [4,5,6]: # Est vers le reste
-                if 1250 < pos.x() < 1320: dans_zone_arret = True
+                if 1225 < pos.x() < 1285: dans_zone_arret = True
             elif v.trajet_numero in [7,8,9]: # Nord vers le reste
-                if 350 < pos.y() < 420: dans_zone_arret = True
+                if 365 < pos.y() < 425: dans_zone_arret = True
             elif v.trajet_numero in [10,11,12]: # Sud vers le reste
-                if 880 < pos.y() < 950: dans_zone_arret = True
+                if 1020 < pos.y() < 1080: dans_zone_arret = True
 
             if dans_zone_arret:
                 axe_vehicule = 1 if v.trajet_numero in [1,2,3,4,5,6] else 2
-                if axe_vehicule != self.cycle_feux: # Si notre axe est au rouge
+                if axe_vehicule != self.cycle_feux and not v.est_urgence: # Si notre axe est au rouge
                     doit_sarreter = True
 
-            if doit_sarreter and not v.est_urgence:
+            if doit_sarreter:
                 # On force la voiture à ne pas avancer ce tour-ci
                 pass
             else:
