@@ -126,11 +126,11 @@ class Simulation(QMainWindow):
 
         # Ajouter les feux tricolores
         self.feux = []
-        # Positions ajustées sur les boitiers dessinés sur la carte
-        self.feux.append(FeuTricolore(self.scene, 540, 660, axe=1))   # Feu Ouest
-        self.feux.append(FeuTricolore(self.scene, 1240, 630, axe=1))  # Feu Est
-        self.feux.append(FeuTricolore(self.scene, 870, 400, axe=2))   # Feu Nord
-        self.feux.append(FeuTricolore(self.scene, 880, 990, axe=2))   # Feu Sud
+        # Positions exactes extraites du SVG
+        self.feux.append(FeuTricolore(self.scene, 584, 692, axe=1))   # Feu Ouest
+        self.feux.append(FeuTricolore(self.scene, 1218, 611, axe=1))  # Feu Est
+        self.feux.append(FeuTricolore(self.scene, 835, 425, axe=2))   # Feu Nord
+        self.feux.append(FeuTricolore(self.scene, 873, 1020, axe=2))  # Feu Sud
 
         self.cycle_feux = 1 # 1 = Horizontal Vert, 2 = Vertical Vert
         self.timer_feux = QTimer()
@@ -225,13 +225,13 @@ class Simulation(QMainWindow):
 
             # Vérifications très simples basées sur la position (X,Y) sur la carte
             if v.trajet_numero in [1,2,3]: # Ouest vers le reste
-                if 500 < pos.x() < 560: dans_zone_arret = True
+                if 520 < pos.x() < 580: dans_zone_arret = True
             elif v.trajet_numero in [4,5,6]: # Est vers le reste
-                if 1240 < pos.x() < 1300: dans_zone_arret = True
+                if 1225 < pos.x() < 1285: dans_zone_arret = True
             elif v.trajet_numero in [7,8,9]: # Nord vers le reste
-                if 350 < pos.y() < 410: dans_zone_arret = True
+                if 365 < pos.y() < 425: dans_zone_arret = True
             elif v.trajet_numero in [10,11,12]: # Sud vers le reste
-                if 985 < pos.y() < 1045: dans_zone_arret = True
+                if 1020 < pos.y() < 1080: dans_zone_arret = True
 
             if dans_zone_arret:
                 axe_vehicule = 1 if v.trajet_numero in [1,2,3,4,5,6] else 2
