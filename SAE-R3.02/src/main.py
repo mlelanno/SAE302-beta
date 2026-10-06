@@ -127,10 +127,10 @@ class Simulation(QMainWindow):
         # Ajouter les feux tricolores
         self.feux = []
         # Positions ajustées sur les boitiers dessinés sur la carte
-        self.feux.append(FeuTricolore(self.scene, 535, 625, axe=1))   # Feu Ouest
-        self.feux.append(FeuTricolore(self.scene, 1200, 550, axe=1))  # Feu Est
-        self.feux.append(FeuTricolore(self.scene, 870, 380, axe=2))   # Feu Nord
-        self.feux.append(FeuTricolore(self.scene, 760, 870, axe=2))   # Feu Sud
+        self.feux.append(FeuTricolore(self.scene, 540, 660, axe=1))   # Feu Ouest
+        self.feux.append(FeuTricolore(self.scene, 1240, 630, axe=1))  # Feu Est
+        self.feux.append(FeuTricolore(self.scene, 870, 400, axe=2))   # Feu Nord
+        self.feux.append(FeuTricolore(self.scene, 880, 990, axe=2))   # Feu Sud
 
         self.cycle_feux = 1 # 1 = Horizontal Vert, 2 = Vertical Vert
         self.timer_feux = QTimer()
@@ -182,11 +182,16 @@ class Simulation(QMainWindow):
                 distance = math.hypot(pos1.x() - pos2.x(), pos1.y() - pos2.y())
 
                 if distance < 40: # Distance de sécurité
-                    # Si trop proche, celui qui a la progression la plus faible s'arrête
-                    if v1.progression < v2.progression:
-                        voitures_a_arreter.add(v1)
+                    # Les véhicules d'urgence doublent (passent à travers) les véhicules normaux
+                    if v1.est_urgence and not v2.est_urgence:
+                        pass # v1 ne s'arrête pas
+                    elif v2.est_urgence and not v1.est_urgence:
+                        pass # v2 ne s'arrête pas
                     else:
-                        voitures_a_arreter.add(v2)
+                        if v1.progression < v2.progression:
+                            voitures_a_arreter.add(v1)
+                        else:
+                            voitures_a_arreter.add(v2)
 
         # 2. Verifier s'il y a un vehicule d'urgence dans le carrefour et forcer les feux
         urgence_en_cours = False
