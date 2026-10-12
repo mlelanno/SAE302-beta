@@ -1,0 +1,44 @@
+SIMULATION DU CARREFOUR — HORLOGE ET TROIS TRAFICS
+
+LANCEMENT
+
+Décompresser le ZIP entier et garder le dossier images à côté de simulation.py.
+Installer l'interface graphique si nécessaire :
+    python -m pip install -r requirements.txt
+Lancer :
+    python simulation.py
+
+CHOIX DU TRAFIC
+
+Dense  : l'image indique 8:00 ; arrivée prévue toutes les 2 secondes par branche.
+Moyen  : l'image indique 12:00 ; arrivée prévue toutes les 4 secondes par branche.
+Faible : l'image indique 23:00 ; arrivée prévue toutes les 8 secondes par branche.
+
+Le programme commence sur Dense, avec l'image 8:00.
+Une seule image est affichée, en haut à droite du carrefour.
+Les trois boutons sont situés sous cette image.
+Le bouton sélectionné reste enfoncé.
+
+Cliquer sur un bouton change l'image et la fréquence des prochaines arrivées.
+Les voitures présentes, les convois et le cycle des feux continuent normalement.
+Une entrée occupée retarde l'arrivée : les voitures ne sont pas empilées.
+Les règles de circulation sont celles du programme précédent.
+
+Ces horaires désignent trois scénarios de simulation. Ce ne sont pas des
+mesures réelles du trafic à Colmar. L'image présente l'heure du scénario,
+pas l'heure réelle de l'ordinateur ni une horloge qui avance.
+
+FICHIERS
+
+simulation.py : le programme, les boutons et l'affichage de l'heure.
+donnees_couleurs.py : les coordonnées des douze trajets.
+carrefour_couleurs.svg : le plan, avec sa légende masquée.
+images/heure_08.png : ton image 8:00, utilisée pour Dense.
+images/heure_12.png : ton image 12:00, utilisée pour Moyen.
+images/heure_23.png : ton image 23:00, utilisée pour Faible.
+requirements.txt : la bibliothèque graphique à installer.
+apercu.png : aperçu de la version livrée.
+
+Les trois images sont reprises telles que fournies et mises à l'échelle
+uniquement pour l'affichage. Les guides colorés restent visibles.
+PySide6 est la seule bibliothèque externe nécessaire au programme.
